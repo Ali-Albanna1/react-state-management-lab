@@ -104,26 +104,56 @@ function handleAddFighter(selectedFighter) {
       return
     }
 
-      setTeam([...team, selectedFighter])
+      setTeam((prev)=>[...prev, selectedFighter])
 
       // subtract
-      setMoney(money - selectedFighter.price)
+      setMoney((prev)=> prev - selectedFighter.price)
 
       
      // update removing the added fighters from all zombie fighters 
-      const updateZombieFighters = zombieFighters.filter((fighter) => fighter.id !== selectedFighter.id )
-
-     setzombieFighters(updateZombieFighters)
+      setzombieFighters((prev)=> prev.filter((fighter) => fighter.id !== selectedFighter.id))
     
 }
 
 console.log(team)
 
 
+  const totalStrength = team.reduce((sum, fighter) => sum +fighter.strength,0)
+  const totalAgility = team.reduce((sum, fighter) => sum +fighter.agility,0)
+
+  function handleRemoveFighter (selectedFighter) {
+     
+    setTeam((prev) => prev.filter((f) => f.id !== selectedFighter.id))
+
+   setzombieFighters((prev)=>[...prev, selectedFighter])
+
+    setMoney((prev)=> prev + selectedFighter.price)
+
+  }
+
   return (
     <>
-      <p>Current monry amount: {money}</p>
+      <h1>Zombie Fighters</h1>
+      <h2>Current monry amount: {money}</h2>
+      <h2>Team Strength: {totalStrength}</h2>
+      <h2>Team Agility: {totalAgility}</h2>
+
+      <h2>Your Team</h2>
+      {team.length === 0 ? <p>Please Pick Fighter:</p> :
       
+      team.map((oneFighter)=> 
+      <ul key={oneFighter.id}>
+        <img src={oneFighter.img} alt="img"/>
+        <li>Name: {oneFighter.name}</li>
+        <li>Price: {oneFighter.price}</li>
+        <li>Strenght: {oneFighter.strength}</li>
+        <li>Agility: {oneFighter.agility}</li>
+         <button onClick={()=>handleRemoveFighter(oneFighter)}>Remove</button>
+      </ul> 
+
+      )}
+      
+      <h2>FIGHTERS:</h2>
       {zombieFighters.map((oneZombieFighter) => 
       
       <ul key={oneZombieFighter.id}>
@@ -136,6 +166,8 @@ console.log(team)
       </ul>
 
       )}
+
+      
 
     </>
   )
